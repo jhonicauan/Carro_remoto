@@ -2,37 +2,39 @@ import websockets
 import asyncio
 import websockets.exceptions
 from Components.Motor import Motor
+from Components.Servo import Servo
 import RPi.GPIO as gpio
-
+import json
 
 gpio.setmode(gpio.BCM)
 gpio.cleanup()  
 
-motorEsquerdoT = Motor(22, 27, 17)
-motorDireitoT = Motor(10, 9, 11)
+motorDireitoT = Motor(27, 22, 17)
+motorEsquerdoT = Motor(10, 9, 11)
 motorEsquerdoF = Motor(20, 16, 21)
-motorDireitoF = Motor(8, 7, 25)
+motorDireitoF = Motor(7, 8, 25)
+servo = Servo(19)
+erro = 0
 
+def forward(value):
+    motorEsquerdoT.forward(value)
+    motorDireitoT.forward(value)
+    motorEsquerdoF.forward(value)
+    motorDireitoF.forward(value)
 
-def forward():
-    motorEsquerdoT.forward(100)
-    motorDireitoT.forward(100)
-    motorEsquerdoF.forward(100)
-    motorDireitoF.forward(100)
+def backward(value):
+    motorEsquerdoT.backward(value)
+    motorDireitoT.backward(value)
+    motorEsquerdoF.backward(value)
+    motorDireitoF.backward(value)
 
-def backward():
-    motorEsquerdoT.backward(100)
-    motorDireitoT.backward(100)
-    motorEsquerdoF.backward(100)
-    motorDireitoF.backward(100)
-
-def left():
+def right(value):
     motorEsquerdoT.forward(100)
     motorDireitoT.forward(0)
     motorEsquerdoF.forward(100)
     motorDireitoF.forward(0)
 
-def right():
+def left(value):
     motorEsquerdoT.forward(0)
     motorDireitoT.forward(100)
     motorEsquerdoF.forward(0)
@@ -62,30 +64,45 @@ async def monitorar_rede():
             stop()
         await asyncio.sleep(0.5)
 
-# WebSocket handler
 async def handler_connection(websocket, path):
     print("Conexão estabelecida")
+    erro = 0  
     try:
-        async for message in websocket:
-            if message == 'forward':
-                forward()
-                await websocket.send("motor indo para frente")
-            elif message == 'backward':
-                backward()
-                await websocket.send("motor indo para trás")
-            elif message == 'right':
-                right()
-                await websocket.send("virando para a direita")
-            elif message == 'left':
-                left()
-                await websocket.send("virando para a esquerda")
-            elif message == 'stop':
-                stop()
-                await websocket.send("motor parou")
-            elif message == 'teste':
-                await websocket.send("")
-            else:
-                await websocket.send("comando não reconhecido")
+        while True:
+            try:
+                message = await asyncio.wait_for(websocket.recv(), timeout=0.5)
+                data = json.loads(message)
+                command = data.get("command")
+                value = data.get("value")
+                erro = 0 
+                if command == 'forward':
+                    forward(value)
+                    await websocket.send("motor indo para frente")
+                elif command == 'backward':
+                    backward(value)
+                    await websocket.send("motor indo para trás")
+                elif command == 'right':
+                    right(value)
+                    await websocket.send("virando para a direita")
+                elif command == 'left':
+                    left(value)
+                    await websocket.send("virando para a esquerda")
+                elif command == 'stop':
+                    stop()
+                    await websocket.send("motor parou")
+                elif command == 'camera':
+                    servo.set_angle(value)
+                    await websocket.send("virando camera")
+                elif command == 'teste':
+                    await websocket.send("")
+                else:
+                    await websocket.send("comando não reconhecido")
+
+            except asyncio.TimeoutError:
+                erro += 1
+                if erro > 2:
+                    stop()
+
     except websockets.exceptions.ConnectionClosed:
         stop()
         print("Conexão finalizada (WebSocket)")
@@ -101,5 +118,4 @@ async def main():
  
     await asyncio.Future()
 
-# Executa a aplica��o
 asyncio.run(main())

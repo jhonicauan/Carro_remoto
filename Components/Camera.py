@@ -4,13 +4,14 @@ from picamera2 import Picamera2
 import time
 
 class Camera:
-    def __init__(self, resolution=(1280, 720), format='RGB888'):
+    def __init__(self, resolution=(320, 240), format='RGB888'):
         self.camera = Picamera2()
         config = self.camera.create_preview_configuration(main={"size": resolution, "format": format})
         self.camera.configure(config)
         self.camera.start()
         time.sleep(2)
-
+    
+    
     def stream(self):
         try:
             while True:
