@@ -1,0 +1,9 @@
+.navbar{
+    height: 8rem;
+    width: 100%;
+    background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    margin: 0 0 4rem 0;
+}

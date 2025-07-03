@@ -1,0 +1,186 @@
+body {
+    height: 100%;
+    width: 100%;
+    background-color: rgb(204, 202, 202);
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.divprincipal {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* permite quebrar linha em telas menores */
+    margin: 2rem;
+    gap: 2rem;
+    justify-content: center; /* centraliza os itens em telas pequenas */
+}
+
+.view {
+    background-color: white;
+    border-radius: 0.4rem;
+    border: solid 0.3rem white;
+    width: 640px;
+    height: 480px;
+    position: relative; /* Para posicionar o loading */
+}
+
+.view img {
+    width: 100%; /* torna o conteúdo responsivo */
+    height: auto; /* mantém proporção */
+    max-height: 480px;
+}
+
+.controls img {
+    width: 100%;
+    height: auto;
+    max-height: 480px;
+}
+
+.controls {
+    background-color: white;
+    border-radius: 0.4rem;
+    border: solid 0.3rem white;
+    width: 480px;
+    height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; /* para evitar que a imagem encoste nas bordas */
+    box-sizing: border-box;
+}
+
+.info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.info img {
+    width: 100px;
+    height: auto;
+}
+
+button {
+    width: 300px;
+    height: 100px;
+    border-radius: 0.4rem;
+    border: solid 0.1rem rgb(0, 0, 0);
+    background-color: rgb(255, 89, 89);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+button:hover {
+    background-color: rgb(255, 60, 60);
+}
+
+button:active {
+    transform: scale(0.95);
+    background-color: rgb(200, 50, 50);
+}
+
+/* Controle em formato de teclado no mobile */
+.mobile-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+}
+
+.mobile-buttons .row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.mobile-buttons button {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+    border-radius: 0.5rem;
+    background-color: rgb(255, 89, 89);
+    color: white;
+    border: solid 0.1rem black;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.mobile-buttons button:hover {
+    background-color: rgb(255, 60, 60);
+}
+
+.mobile-buttons button:active {
+    transform: scale(0.95);
+    background-color: rgb(200, 50, 50);
+}
+
+/* Loading overlay para a câmera */
+.loading-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.loading-img {
+    width: 50px;
+    height: 50px;
+    /* imagem fixa, sem animação */
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .view {
+        width: 100%;
+        height: auto;
+    }
+
+    .controls {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .divprincipal {
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem;
+    }
+
+    button {
+        width: 80%;
+        height: 80px;
+        font-size: 1rem;
+    }
+
+    /* Força esconder Direção do carro no mobile */
+    .car {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .info img {
+        width: 80px;
+    }
+
+    button {
+        width: 100%;
+        height: 60px;
+        font-size: 0.9rem;
+    }
+}
